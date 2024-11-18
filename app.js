@@ -1,9 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const button = document.getElementById("search-button");
+    const form = document.getElementById("search-form");
+    const input = document.getElementById("search-input");
+    const resultDiv = document.getElementById("result");
 
-    button.addEventListener("click", () => {
-        // Create an AJAX request
-        fetch('superheroes.php')
+    form.addEventListener("submit", (event) => {
+        event.preventDefault(); 
+
+        const query = input.value.trim(); 
+
+        // Build the URL with the query parameter
+        const url = query ? `superheroes.php?query=${encodeURIComponent(query)}` : `superheroes.php`;
+
+        // Make an AJAX request to fetch the data
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -11,11 +20,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 return response.text();
             })
             .then(data => {
-                // Show the result as an alert
-                alert(data);
+                // Display the result in the result div
+                resultDiv.innerHTML = data;
             })
             .catch(error => {
-                console.error("There was a problem with the fetch operation:", error);
+                console.error("Error fetching the superheroes list:", error);
+                resultDiv.innerHTML = `<p>An error occurred. Please try again later.</p>`;
             });
     });
 });
